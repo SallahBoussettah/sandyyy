@@ -33,59 +33,14 @@ function withinRows(j) {
 }
 
 function setup() {
-  createCanvas(windowWidth - 40, windowHeight - 40);
+  createCanvas(500, 300);
   colorMode(HSB, 360, 255, 255);
   cols = width / w;
   rows = height / w;
   grid = make2DArray(cols, rows);
 }
 
-function windowResized() {
-  resizeCanvas(windowWidth - 40, windowHeight - 40);
-  let newCols = width / w;
-  let newRows = height / w;
-  
-  let newGrid = make2DArray(newCols, newRows);
-  
-  for (let i = 0; i < min(cols, newCols); i++) {
-    for (let j = 0; j < min(rows, newRows); j++) {
-      if (grid[i][j] > 0) {
-        newGrid[i][j] = grid[i][j];
-      }
-    }
-  }
-  
-  grid = newGrid;
-  cols = newCols;
-  rows = newRows;
-}
-
 function mouseDragged() {
-  let mouseCol = floor(mouseX / w);
-  let mouseRow = floor(mouseY / w);
-  
-  // Randomly add an area of sand particles
-  let matrix = 5;
-  let extent = floor(matrix / 2);
-  for (let i = -extent; i <= extent; i++) {
-    for (let j = -extent; j <= extent; j++) {
-      if (random(1) < 0.75) {
-        let col = mouseCol + i;
-        let row = mouseRow + j;
-        if (withinCols(col) && withinRows(row)) {
-          grid[col][row] = hueValue;
-        }
-      }
-    }
-  }
-  // Change the color of the sand over time
-  hueValue += 1;
-  if (hueValue > 360) {
-    hueValue = 1;
-  }
-}
-
-function mousePressed() {
   let mouseCol = floor(mouseX / w);
   let mouseRow = floor(mouseY / w);
   
@@ -138,7 +93,7 @@ function draw() {
       // If it's a piece of sand!
       if (state > 0) {
         // What is below?
-        let below = j+1 < rows ? grid[i][j + 1] : -1;
+        let below = grid[i][j + 1];
         
         // Randomly fall left or right
         let dir = 1;
@@ -149,10 +104,10 @@ function draw() {
         // Check below left or right
         let belowA = -1;
         let belowB = -1;
-        if (withinCols(i + dir) && j+1 < rows) {
+        if (withinCols(i + dir)) {
           belowA = grid[i + dir][j + 1];
         }
-        if (withinCols(i - dir) && j+1 < rows) {
+        if (withinCols(i - dir)) {
           belowB = grid[i - dir][j + 1];
         }
         
@@ -172,4 +127,4 @@ function draw() {
     }
   }
   grid = nextGrid;
-} 
+}
